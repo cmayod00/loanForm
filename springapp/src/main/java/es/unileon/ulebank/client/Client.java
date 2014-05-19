@@ -30,7 +30,7 @@ public class Client {
 	/**
      * Identifier of the client
      */
-    private DNIHandler id;
+    private Handler id;
     
     /**
      * Accounts where the client appear
@@ -44,7 +44,7 @@ public class Client {
      */
     public Client(Handler clientHandler){
         accounts = new ArrayList<>();
-        this.id=(DNIHandler) clientHandler;
+        this.id= clientHandler;
     }
     
     /**

@@ -22,7 +22,7 @@ public class LoanLiquidateCommand implements Command {
 	@Override
 	public void execute() {
 		try {
-			this.loan.liquidate(this.moneyToLiquidate);
+			this.loan.amortize(this.moneyToLiquidate);
 		} catch (LoanException e) {
 		}
 	}
@@ -35,7 +35,7 @@ public class LoanLiquidateCommand implements Command {
 	@Override
 	public void redo() {
 		try {
-			this.loan.liquidate(this.moneyToLiquidate);
+			this.loan.amortize(this.moneyToLiquidate);
 		} catch (LoanException e) {
 		}
 	}

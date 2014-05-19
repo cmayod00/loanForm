@@ -41,7 +41,7 @@ public class Office {
     /**
      *
      */
-    private final OfficeHandler id;
+    private final Handler id;
     /**
      *
      */
@@ -90,7 +90,7 @@ public class Office {
     public Office(Handler id, Bank bank) {
         this.accounts = new ArrayList<>();
         this.clients = new ArrayList<>();
-        this.id = (OfficeHandler) id;
+        this.id =  id;
         this.bank = bank;
         this.nextAccountNumber = 0;
         this.employeeList = new ArrayList<>();

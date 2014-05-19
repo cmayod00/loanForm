@@ -398,16 +398,15 @@ public class Loan implements FinancialProduct {
 	//TODO 
 	@Override
 	public void update() {
-		this.interest=this.interestRate.getInterestRate()+bankInterest;
 		this.payments = this.strategy.doCalculationOfPayments();
 		this.loanHistory.addAllPayments(this.payments);
 	}
 
-	public double liquidate(double quantity) throws LoanException {
+	public double amortize(double quantity) throws LoanException {
 		StringBuffer exceptionMessage = new StringBuffer();
 		double comission = 0;
 
-		if (!(quantity < this.debt)) {
+		if (!(quantity <= this.debt)) {
 			exceptionMessage
 					.append("The money to liquidate is more than the debt!");
 		}
