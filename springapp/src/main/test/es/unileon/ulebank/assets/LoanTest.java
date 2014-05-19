@@ -27,6 +27,7 @@ public class LoanTest {
 	private Loan loanWrongInterest;
 	private Loan loanCancel;
 	private Loan loanAmortize;
+	private Loan loanNotAllowed;
 
 	private TransactionManager manager;
 	private Bank bank;
@@ -34,6 +35,7 @@ public class LoanTest {
 	private Account commercialAccount1, commercialAccount2;
 	private GenericHandler authorizedHandler1, authorizedHandler2;
 	private Client authorized1, authorized2;
+	
 
 	@Before
 	public void setUp() throws MalformedHandlerException, TransactionException,
@@ -72,6 +74,13 @@ public class LoanTest {
 
 		this.loanAmortize = new Loan(new FinancialProductHandler("LN", "ES"),
 				168000, 0.20, PaymentPeriod.ANNUAL, 72, this.commercialAccount2);
+	}
+	
+	@Test(expected = LoanException.class)
+	public void testLoanNotAllowed() throws LoanException,
+			LINCMalformedException, MalformedHandlerException {
+		this.loanNotAllowed = new Loan(new FinancialProductHandler("LN", "ES"), 100000000, 0.01,
+				PaymentPeriod.MONTHLY, 30, this.commercialAccount1);
 	}
 
 	@Test(expected = LoanException.class)

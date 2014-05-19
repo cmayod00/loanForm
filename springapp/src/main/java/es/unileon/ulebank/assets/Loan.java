@@ -261,7 +261,12 @@ public class Loan implements FinancialProduct {
 
 		this.idLoan = idLoan;
 
-		this.debt = initialCapital;
+		if (initialCapital < 100000000) {
+			this.debt = initialCapital;
+		}else{
+			exceptionMessage.append("The bank can not lend this amount of money");
+		}
+		
 
 		if (interest >= 0 && interest <= 1) {
 			this.bankInterest=interest;
