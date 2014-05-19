@@ -44,7 +44,6 @@ public class ClientController {
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		LoanBean bean = new LoanBean();
-//		bean.setPaymentPeriod(PaymentPeriod.MONTHLY.toString());
 		
 		Map<String, Object> myModel = new HashMap<String, Object>();
 		myModel.put("client", this.client);

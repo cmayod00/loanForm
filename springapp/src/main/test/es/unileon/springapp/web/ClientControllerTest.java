@@ -13,7 +13,7 @@ import es.unileon.ulebank.handler.DNIHandler;
 
 
 
-public class InventoryControllerTests {
+public class ClientControllerTest {
 
     @Test
     public void testHandleRequestView() throws Exception{		
@@ -23,13 +23,11 @@ public class InventoryControllerTests {
         client.setSurname("Mayo");
         controller.setClient(client);
         ModelAndView modelAndView = controller.handleRequest(null, null);		
-        assertEquals("hello", modelAndView.getViewName());
+        assertEquals("client", modelAndView.getViewName());
         assertNotNull(modelAndView.getModel());
 	@SuppressWarnings("unchecked")
         Map<String, Object> modelMap = (Map<String, Object>) modelAndView.getModel().get("model");
-        String nowValue = (String) modelMap.get("now");
         Client clientReceived = (Client) modelMap.get("client");
-        assertNotNull(nowValue);
         assertEquals("Carlos", clientReceived.getName());
         assertEquals("Mayo", clientReceived.getSurname());
     }

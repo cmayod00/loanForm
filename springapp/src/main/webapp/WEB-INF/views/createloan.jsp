@@ -14,10 +14,18 @@
     <tr>
     	<td>Amount of Money: </td>
     	<td><form:input path="initialCapital"></form:input></td>
+    	<td width="60%">
+          <form:errors path="initialCapital" cssClass="error"/>
+        </td>
+    	
     </tr>
     <tr>
     	<td>Interest: </td>
     	<td><form:input path="interest"></form:input></td>
+    	<td width="60%">
+          <form:errors path="interest" cssClass="error"/>
+        </td>
+    	
     </tr>
     <tr>
     	<td>Payment period: </td>
@@ -40,6 +48,10 @@
     <tr>
     	<td>Number of fees: </td>
     	<td><form:input path="amortizationTime"></form:input></td>
+    	<td width="60%">
+          <form:errors path="amortizationTime" cssClass="error"/>
+        </td>
+    	
     </tr>
   </table>
   <br>

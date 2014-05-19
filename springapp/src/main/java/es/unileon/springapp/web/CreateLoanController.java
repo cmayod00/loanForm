@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.logging.Log;
@@ -20,9 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.unileon.springapp.beans.LoanBean;
-import es.unileon.springapp.service.PriceIncrease;
 import es.unileon.ulebank.account.Account;
-import es.unileon.ulebank.account.AccountHandler;
 import es.unileon.ulebank.assets.KindOfMethod;
 import es.unileon.ulebank.assets.Loan;
 import es.unileon.ulebank.assets.exceptions.LoanException;
@@ -55,14 +51,8 @@ public class CreateLoanController {
     @RequestMapping(method = RequestMethod.POST)
     public ModelAndView onSubmit(@Valid LoanBean loanBean, BindingResult result) throws LINCMalformedException, LoanException
     {
-    	 System.out.println(loanBean.getAmortizationTime());
-        
-         System.out.println(loanBean.getInitialCapital());
-         System.out.println(loanBean.getInterest());
-         System.out.println(loanBean.getLoanType());
-         System.out.println(loanBean.getPaymentPeriod());
         if (result.hasErrors()) {
-           // return new ModelAndView("OKJ");
+           return new ModelAndView("The page has been falled");
         }
 	
         Handler idLoan = new LoanIdentificationNumberCode("MG", "ES");
@@ -77,21 +67,7 @@ public class CreateLoanController {
         return new ModelAndView("client","model",myModel);
     }
 
-//    @RequestMapping(method = RequestMethod.POST)
-//    public String onSubmit(@Valid LoanBean loanBean, BindingResult result) throws LINCMalformedException, LoanException
-//    {
-//        if (result.hasErrors()) {
-//            //return new ModelAndView("createloan");
-//        	//return "error";
-//        }
-//	
-//        LoanIdentificationNumberCode idLoan = new LoanIdentificationNumberCode("MG", "ES");
-//        //Loan loan = new Loan(idLoan, loanBean.getInitialCapital(), loanBean.getInterest(), loanBean.getPaymentPeriod(), loanBean.getAmortizationTime(), account);
-//
-//       // loanBean.setId(idLoan.toString());
-//        return "redirect:/client.htm";
-//        //return new ModelAndView("client","model",loanBean);
-//    }
+
 
     @RequestMapping(method = RequestMethod.GET)
     protected String init(ModelMap model) {
@@ -100,14 +76,6 @@ public class CreateLoanController {
         model.addAttribute("createloan", bean);
     	return "createloan";
     }
-    
-//    @RequestMapping(method = RequestMethod.GET)
-//    protected LoanBean init(ModelMap model) {
-//        LoanBean bean = new LoanBean();
-//        
-//       // model.addAttribute("createloan", bean);
-//    	return bean;
-//    }
     
     private PaymentPeriod getPaymentPeriod(String paymentPeriod) {
 		if (paymentPeriod.equalsIgnoreCase("ANNUAL")) {
