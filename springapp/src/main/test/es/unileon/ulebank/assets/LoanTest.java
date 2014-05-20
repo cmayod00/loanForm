@@ -67,27 +67,28 @@ public class LoanTest {
 		transaction2.setEffectiveDate(new Date());
 		this.commercialAccount2.doTransaction(transaction2);
 
+		
 		// we create a loan of 100000 euros linked to the account
 		this.loanCancel = new Loan(new FinancialProductHandler("LN", "ES"),
 				100000, 0.15, PaymentPeriod.MONTHLY, 23,
-				this.commercialAccount1);
+				this.commercialAccount1,authorized1);
 
 		this.loanAmortize = new Loan(new FinancialProductHandler("LN", "ES"),
-				168000, 0.20, PaymentPeriod.ANNUAL, 72, this.commercialAccount2);
+				168000, 0.20, PaymentPeriod.ANNUAL, 72, this.commercialAccount2,authorized2);
 	}
 	
 	@Test(expected = LoanException.class)
 	public void testLoanNotAllowed() throws LoanException,
 			LINCMalformedException, MalformedHandlerException {
 		this.loanNotAllowed = new Loan(new FinancialProductHandler("LN", "ES"), 100000000, 0.01,
-				PaymentPeriod.MONTHLY, 30, this.commercialAccount1);
+				PaymentPeriod.MONTHLY, 30, this.commercialAccount1,authorized1);
 	}
 
 	@Test(expected = LoanException.class)
 	public void testLoanWrongInterest() throws LoanException,
 			LINCMalformedException, MalformedHandlerException {
 		this.loanWrongInterest = new Loan(new FinancialProductHandler("LN", "ES"), 50000, 20,
-				PaymentPeriod.MONTHLY, 23, this.commercialAccount1);
+				PaymentPeriod.MONTHLY, 23, this.commercialAccount1,authorized1);
 	}
 
 	@Test(expected = LoanException.class)
