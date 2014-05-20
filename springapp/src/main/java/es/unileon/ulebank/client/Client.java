@@ -3,12 +3,13 @@
 
 package es.unileon.ulebank.client;
 
-import es.unileon.ulebank.account.Account;
-import es.unileon.ulebank.handler.DNIHandler;
-import es.unileon.ulebank.handler.Handler;
-
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+
+import es.unileon.ulebank.account.Account;
+import es.unileon.ulebank.assets.Loan;
+import es.unileon.ulebank.handler.Handler;
 
 /**
  *Class tha provides the basic gestion data of a client in a bank
@@ -37,6 +38,8 @@ public class Client {
      */
     private ArrayList<Account> accounts;
     
+    private List<Loan> loans;
+    
     /**
      * Constructor of client. Receive the id and initilize the list of accounts
      * 
@@ -45,6 +48,7 @@ public class Client {
     public Client(Handler clientHandler){
         accounts = new ArrayList<>();
         this.id= clientHandler;
+        loans= new ArrayList<Loan>();
     }
     
     /**
@@ -58,7 +62,26 @@ public class Client {
         }
     }
     
-    /**
+    public void addLoan(Loan loan){
+//        Iterator<Account> iterator = accounts.iterator();
+//        while(iterator.hasNext()){
+//        	Iterator<Client> titular = iterator.next().getTitulars().iterator();
+//        	while (titular.hasNext()) {
+//        		if(this.id.toString().equals(titular.next().getId().toString())){
+//            		
+//    			}
+//			}
+//        }
+    	if(!loans.contains(loan)){
+            loans.add(loan);
+        }
+    }
+    
+    public List<Loan> getLoans() {
+		return loans;
+	}
+
+	/**
      * Remove the account identified with acountHandler
      * 
      * @param accountHandler

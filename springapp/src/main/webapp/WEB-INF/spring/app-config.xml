@@ -17,12 +17,48 @@
        <!-- Configures the @Controller programming model -->
        <mvc:annotation-driven/>
        
+       <bean id="loan" class="es.unileon.ulebank.assets.Loan">
+       		<constructor-arg>
+       			<ref bean="idLoan"/>
+       		</constructor-arg>
+       		<constructor-arg>
+       			<value type="java.lang.Double">100000</value>
+       		</constructor-arg>
+       		<constructor-arg>
+       			<value type="java.lang.Double">0.05</value>
+       		</constructor-arg>
+       		<constructor-arg>
+       			<value type="es.unileon.ulebank.support.PaymentPeriod">MONTHLY</value>
+       		</constructor-arg>
+       		<constructor-arg>
+       			<value type="int">24</value>
+       		</constructor-arg>
+       		<constructor-arg>
+       			<ref bean="account"/>
+       		</constructor-arg>
+       		<constructor-arg>
+       			<ref bean="client"/>
+       		</constructor-arg>	
+       </bean>
+       
        <bean id="client" class="es.unileon.ulebank.client.Client">
          <constructor-arg>
          <ref bean="id"/>
          </constructor-arg>
          <property name="name"><value type="java.lang.String">Carlos</value></property>      
          <property name="surname"><value type="java.lang.String">Mayo</value></property>
+       </bean>
+       
+       <bean id="account" class="es.unileon.ulebank.account.Account">
+       		<constructor-arg>
+       			<ref bean="office"/>
+       		</constructor-arg>
+       		<constructor-arg>
+       			<ref bean="bank"/>
+       		</constructor-arg>
+       		<constructor-arg>
+       			<value>1234567890</value>
+       		</constructor-arg>
        </bean>
 
        <bean id="id" class="es.unileon.ulebank.handler.DNIHandler">
@@ -61,18 +97,14 @@
        </constructor-arg>
        </bean>
        
-       <bean id="account" class="es.unileon.ulebank.account.Account">
+       <bean id="idLoan" class="es.unileon.ulebank.assets.handler.LoanIdentificationNumberCode">
        		<constructor-arg>
-       			<ref bean="office"/>
+       			<value>MG</value>
        		</constructor-arg>
        		<constructor-arg>
-       			<ref bean="bank"/>
-       		</constructor-arg>
-       		<constructor-arg>
-       			<value>1234567890</value>
+       			<value>ES</value>
        		</constructor-arg>
        </bean>
-       
        
        <bean id="transactionManager" class = "es.unileon.ulebank.transacionManager.TransactionManager"></bean>
 

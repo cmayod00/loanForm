@@ -17,6 +17,7 @@ import es.unileon.ulebank.assets.strategy.commission.StrategyCommission;
 import es.unileon.ulebank.assets.strategyloan.FrenchMethod;
 import es.unileon.ulebank.assets.strategyloan.ScheduledPayment;
 import es.unileon.ulebank.assets.strategyloan.StrategyLoan;
+import es.unileon.ulebank.client.Client;
 import es.unileon.ulebank.command.Command;
 import es.unileon.ulebank.exceptions.TransactionException;
 import es.unileon.ulebank.handler.MalformedHandlerException;
@@ -26,8 +27,6 @@ import es.unileon.ulebank.support.PaymentPeriod;
 import es.unileon.ulebank.taskList.Task;
 import es.unileon.ulebank.taskList.TaskList;
 import es.unileon.ulebank.time.Time;
-
-
 
 // TODO PREGUNTAR A CAMINO COMO ACTUALIZAR DEBT CUANDO PASIVOS REALIZA EL PAGO DE LA CUOTA
 
@@ -41,7 +40,7 @@ public class Loan implements FinancialProduct {
 	 * Interest applicated to the loan
 	 */
 	private double interest;
-	
+
 	/**
 	 * Bankinterest
 	 */
@@ -74,7 +73,7 @@ public class Loan implements FinancialProduct {
 	private Handler idLoan;
 
 	/**
-	 *Strategy used for calculate the payments
+	 * Strategy used for calculate the payments
 	 */
 	private StrategyLoan strategy;
 
@@ -104,7 +103,8 @@ public class Loan implements FinancialProduct {
 	 */
 	private StrategyCommission openningCommission;
 	/**
-	 * Commission applied if the owner decides modify the loan contract during the loan
+	 * Commission applied if the owner decides modify the loan contract during
+	 * the loan
 	 */
 	private StrategyCommission modifyCommission;
 	// TODO Add the amortizedCommission
@@ -133,7 +133,7 @@ public class Loan implements FinancialProduct {
 	/**
 	 * The interest rate of loan
 	 */
-	
+
 	private InterestRate interestRate;
 	/**
 	 * Indicate when is the period of recalculate the period
@@ -144,10 +144,11 @@ public class Loan implements FinancialProduct {
 	 * Indicate when the loan is created
 	 */
 	private Date creationalDate;
-	 /**	
-	  * This is the task list
-	  */
+	/**
+	 * This is the task list
+	 */
 	private TaskList taskList;
+	private Client client;
 
 	/**
 	 * Constructor of Loan class
@@ -167,7 +168,7 @@ public class Loan implements FinancialProduct {
 	 * 
 	 */
 	public Loan(Handler idLoan, double initialCapital, double interest,
-			PaymentPeriod paymentPeriod, int amortizationTime, Account account)
+			PaymentPeriod paymentPeriod, int amortizationTime, Account account, Client client)
 			throws LoanException {
 		StringBuffer exceptionMessage = new StringBuffer();
 
@@ -182,7 +183,12 @@ public class Loan implements FinancialProduct {
 		
 		this.idLoan = idLoan;
 
-		this.debt = initialCapital;
+		if (initialCapital < 100000000) {
+			this.debt = initialCapital;
+		} else {
+			exceptionMessage
+					.append("The bank can not lend this amount of money");
+		}
 
 		if (interest >= 0 && interest <= 1) {
 			this.interest = interest;
@@ -191,21 +197,14 @@ public class Loan implements FinancialProduct {
 			exceptionMessage
 					.append("The interest value must be a value between 0 and 1\n");
 		}
-
-		// if
-		// (!this.openningCommission.getClass().equals(PercentCommission.class))
-		// {
-		// this.debt += openningCommission.calculateCommission();
-		// } else {
-		// this.debt += this.debt * (openningCommission.calculateCommission());
-		// }
-		//
-		// if (!this.studyCommission.getClass().equals(PercentCommission.class))
-		// {
-		// this.debt += studyCommission.calculateCommission();
-		// } else {
-		// this.debt += this.debt * (studyCommission.calculateCommission());
-		// }
+		
+		
+		
+		this.client = client;
+		if (this.client == null) {
+			exceptionMessage.append("This client is not a titular of the account");
+		}
+		
 
 		this.paymentPeriod = paymentPeriod;
 		this.amortizationTime = amortizationTime;
@@ -222,6 +221,7 @@ public class Loan implements FinancialProduct {
 			throw new LoanException(exceptionMessage.toString());
 
 	}
+
 	/**
 	 * This is the constructor used for variable loans
 	 * 
@@ -238,20 +238,20 @@ public class Loan implements FinancialProduct {
 	 * @param commissions
 	 *            Type of commissions applicated to the loan
 	 * @param interestRate
-	 * 			  Is the interestRateof Test variable loan
+	 *            Is the interestRateof Test variable loan
 	 * 
 	 */
-	//TODO 
+	// TODO
 	public Loan(Handler idLoan, double initialCapital, double interest,
-			PaymentPeriod paymentPeriod, int amortizationTime, Account account
-			,InterestRate interestRate,PaymentPeriod recalcOfInterset)
+			PaymentPeriod paymentPeriod, int amortizationTime, Account account,
+			InterestRate interestRate, PaymentPeriod recalcOfInterset)
 			throws LoanException {
 		StringBuffer exceptionMessage = new StringBuffer();
-		this.interestRate=interestRate;
-		this.recalcOfInterest=recalcOfInterset;
-		
+		this.interestRate = interestRate;
+		this.recalcOfInterest = recalcOfInterset;
+
 		this.creationalDate.setTime(Time.getInstance().getTime());
-		
+
 		this.loanHistory = new LoanHistory();
 		this.cancelCommission = new PercentCommission();
 		this.studyCommission = new PercentCommission();
@@ -263,19 +263,20 @@ public class Loan implements FinancialProduct {
 
 		if (initialCapital < 100000000) {
 			this.debt = initialCapital;
-		}else{
-			exceptionMessage.append("The bank can not lend this amount of money");
+		} else {
+			exceptionMessage
+					.append("The bank can not lend this amount of money");
 		}
-		
 
 		if (interest >= 0 && interest <= 1) {
-			this.bankInterest=interest;
-			this.interest = this.bankInterest+this.interestRate.getInterestRate();
+			this.bankInterest = interest;
+			this.interest = this.bankInterest
+					+ this.interestRate.getInterestRate();
 		} else {
 			exceptionMessage
 					.append("The interest value must be a value between 0 and 1\n");
 		}
-		
+
 		this.paymentPeriod = paymentPeriod;
 		this.amortizationTime = amortizationTime;
 		this.payments = new ArrayList<ScheduledPayment>();
@@ -286,44 +287,49 @@ public class Loan implements FinancialProduct {
 		this.loanHistory.addAllPayments(this.payments);
 		this.account = account;
 		this.arrayListIndex = 0;
-		this.taskList=new TaskList();
-	//TODO Ask integration about the id of the command
+		this.taskList = new TaskList();
+		// TODO Ask integration about the id of the command
 		Command command;
 		try {
-			command = (Command) new UpdateInterestCommand(this, (es.unileon.ulebank.assets.handler.Handler) new GenericLoanHandler("aaa"));
-		
-		Task taskUpdateInterest=new Task(forwardDate(creationalDate, recalcOfInterset), command);
-		this.taskList.addTask(taskUpdateInterest);
+			command = (Command) new UpdateInterestCommand(
+					this,
+					(es.unileon.ulebank.assets.handler.Handler) new GenericLoanHandler(
+							"aaa"));
+
+			Task taskUpdateInterest = new Task(forwardDate(creationalDate,
+					recalcOfInterset), command);
+			this.taskList.addTask(taskUpdateInterest);
 		} catch (MalformedHandlerException e) {
 			e.printStackTrace();
 		}
-		
+
 		if (exceptionMessage.length() > 1)
 			throw new LoanException(exceptionMessage.toString());
-		
+
 	}
+
 	/**
 	 * This method can forward the actual date
+	 * 
 	 * @param date
 	 * @param paymentPeriod
 	 * @return The new simulated date
 	 */
-	/*TODO puede ser cambiado a otra clase utils*/ 
-	public Date forwardDate(Date date,PaymentPeriod paymentPeriod){
+	/* TODO puede ser cambiado a otra clase utils */
+	public Date forwardDate(Date date, PaymentPeriod paymentPeriod) {
 		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);//reset the parameter 
-		
-		int month=calendar.get(Calendar.MONTH)+paymentPeriod.getPeriod();
-		int year=calendar.get(Calendar.YEAR);
-		int day=calendar.get(Calendar.DATE);
-		if(month > 12){
+		calendar.setTime(date);// reset the parameter
+
+		int month = calendar.get(Calendar.MONTH) + paymentPeriod.getPeriod();
+		int year = calendar.get(Calendar.YEAR);
+		int day = calendar.get(Calendar.DATE);
+		if (month > 12) {
 			++year;
 		}
-		month=month%12+1;
-		
+		month = month % 12 + 1;
+
 		calendar.set(year, month, day);
 
-		
 		return calendar.getTime();
 	}
 
@@ -364,7 +370,8 @@ public class Loan implements FinancialProduct {
 						feeCancel, new Date(Time.getInstance().getTime()),
 						"cancel loan");
 
-				transactionCharge.setEffectiveDate(new Date(Time.getInstance().getTime()));
+				transactionCharge.setEffectiveDate(new Date(Time.getInstance()
+						.getTime()));
 				this.account.doTransaction(transactionCharge);
 			} else {
 				msgException.append("not enough money");
@@ -400,7 +407,7 @@ public class Loan implements FinancialProduct {
 	/**
 	 * Method that is necesary when the interest change
 	 */
-	//TODO 
+	// TODO
 	@Override
 	public void update() {
 		this.payments = this.strategy.doCalculationOfPayments();
@@ -427,7 +434,8 @@ public class Loan implements FinancialProduct {
 				Transaction transactionCharge = new GenericTransaction(
 						quantity, new Date(Time.getInstance().getTime()),
 						"liquidate a quantity");
-				transactionCharge.setEffectiveDate(new Date(Time.getInstance().getTime()));
+				transactionCharge.setEffectiveDate(new Date(Time.getInstance()
+						.getTime()));
 				this.account.doTransaction(transactionCharge);
 			} else {
 				exceptionMessage.append("not enough money");
@@ -463,6 +471,10 @@ public class Loan implements FinancialProduct {
 
 	public PaymentPeriod getPaymentPeriod() {
 		return paymentPeriod;
+	}
+	
+	public String getPaymentPeriodString() {
+		return paymentPeriod.toString();
 	}
 
 	public void setPaymentPeriod(PaymentPeriod paymentPeriod) {
@@ -519,7 +531,7 @@ public class Loan implements FinancialProduct {
 		update();
 	}
 
-	//TODO NO SE SI ESTARA BIEN
+	// TODO NO SE SI ESTARA BIEN
 	@Override
 	public Handler getId() {
 		return this.idLoan;
@@ -540,7 +552,7 @@ public class Loan implements FinancialProduct {
 	 *            indicates the number of payments to be amortized
 	 */
 	@Deprecated
-	public void paid(int index) { //Este metodo se borrara asiq no lo useis
+	public void paid(int index) { // Este metodo se borrara asiq no lo useis
 		if (index >= 0 && index < payments.size()) {
 			ScheduledPayment payment = payments.get(index);
 			if (!payment.isPaid()) {
@@ -555,12 +567,12 @@ public class Loan implements FinancialProduct {
 	 * 
 	 * @param handlerId
 	 *            is the handler of the payment
-	 * @throws LoanException 
+	 * @throws LoanException
 	 */
 	public void paid(Handler handlerId) throws LoanException {
 		StringBuffer exceptionMessage = new StringBuffer();
-		
-		//we look for the payment
+
+		// we look for the payment
 		boolean found = false;
 		ScheduledPayment payment = null;
 		for (int i = 0; i < this.payments.size() && !found; i++) {
@@ -569,31 +581,32 @@ public class Loan implements FinancialProduct {
 				found = true;
 			}
 		}
-		
-		
+
 		if (payment != null && !payment.isPaid()) {
-			
-			//we do the transaction
+
+			// we do the transaction
 			try {
 				Transaction transaction = new GenericTransaction(
-						payment.getImportOfTerm(), new Date(
-								Time.getInstance().getTime()), "payment");
+						payment.getImportOfTerm(), new Date(Time.getInstance()
+								.getTime()), "payment");
 
-				transaction.setEffectiveDate(new Date(Time.getInstance().getTime()));
+				transaction.setEffectiveDate(new Date(Time.getInstance()
+						.getTime()));
 
 				this.account.doTransaction(transaction);
-				
+
 			} catch (TransactionException e) {
 				exceptionMessage.append("Transaction error.\n");
 			}
-			
-			//if the transaction has not errors and was made successfully
-			if(exceptionMessage.length() == 0){
-				//we subtract the quantity to amortize of the debt
+
+			// if the transaction has not errors and was made successfully
+			if (exceptionMessage.length() == 0) {
+				// we subtract the quantity to amortize of the debt
 				this.debt -= payment.getAmortization();
 				payment.setPaid(true);
-			}else{
-				throw new LoanException("The payment has not been made successfully.");
+			} else {
+				throw new LoanException(
+						"The payment has not been made successfully.");
 			}
 		}
 	}
@@ -653,7 +666,7 @@ public class Loan implements FinancialProduct {
 		return new LoanIterator(this.payments);
 	}
 
-	//TODO MAKE THE DOC IN ENGLISH OF THIS METHOD PLEASE. Not put your ideas
+	// TODO MAKE THE DOC IN ENGLISH OF THIS METHOD PLEASE. Not put your ideas
 	public void makeNormalPayment(double amount) {
 		// lanzo alguna excepcion o que?
 		// pongo la condicion de que el pago se haga entre los meses indicados?
@@ -669,7 +682,8 @@ public class Loan implements FinancialProduct {
 		}
 
 	}
-	//TODO MAKE THE DOC IN ENGLISH OF THIS METHOD PLEASE. Not put your ideas
+
+	// TODO MAKE THE DOC IN ENGLISH OF THIS METHOD PLEASE. Not put your ideas
 
 	// metodo de pago de cantidades diferentes a la mensual calculada
 	public void makeAbnormalPayment(double amount) {

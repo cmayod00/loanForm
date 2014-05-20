@@ -2,6 +2,7 @@ package es.unileon.springapp.web;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -54,15 +55,16 @@ public class CreateLoanController {
         if (result.hasErrors()) {
            return new ModelAndView("The page has been falled");
         }
-	
+        
         Handler idLoan = new LoanIdentificationNumberCode("MG", "ES");
         loanBean.setId(idLoan.toString());
         PaymentPeriod period = getPaymentPeriod(loanBean.getPaymentPeriod());
-        Loan loan = new Loan(idLoan, loanBean.getInitialCapital(), loanBean.getInterest(), period, loanBean.getAmortizationTime(), account);
-        
+        Loan loan = new Loan(idLoan, loanBean.getInitialCapital(), loanBean.getInterest(), period, loanBean.getAmortizationTime(), account,client);
+        client.addLoan(loan);
         Map<String, Object> myModel = new HashMap<String, Object>();
+        List<Loan> loans = client.getLoans();
 		myModel.put("client", this.client);
-		myModel.put("createloan", loanBean);
+		myModel.put("loans", loans);
 
         return new ModelAndView("client","model",myModel);
     }

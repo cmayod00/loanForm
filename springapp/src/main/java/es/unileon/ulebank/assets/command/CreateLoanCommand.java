@@ -7,6 +7,7 @@ import es.unileon.ulebank.assets.handler.Handler;
 import es.unileon.ulebank.assets.handler.LoanIdentificationNumberCode;
 import es.unileon.ulebank.assets.strategy.commission.PercentCommission;
 import es.unileon.ulebank.assets.strategy.commission.StrategyCommission;
+import es.unileon.ulebank.client.Client;
 import es.unileon.ulebank.support.LoanList;
 import es.unileon.ulebank.support.PaymentPeriod;
 
@@ -25,7 +26,7 @@ public class CreateLoanCommand implements Command {
 	private PaymentPeriod paymentPeriod;
 	private int amortizationTime;
 	private Account account;
-
+	private Client client;
 	private Loan loan;
 
 	private LoanList<Loan> loanList;
@@ -46,6 +47,7 @@ public class CreateLoanCommand implements Command {
 		this.paymentPeriod = paymentPeriod;
 		this.amortizationTime = amortizationTime;
 		this.loanList = loanList;
+		this.client = client;
 	}
 
 	@Override
@@ -53,7 +55,7 @@ public class CreateLoanCommand implements Command {
 		try {
 			this.loan = new Loan(this.idLoan, this.initialCapital,
 					this.interest, this.paymentPeriod, this.amortizationTime,
-					this.account);
+					this.account,this.client);
 		} catch (LoanException e) {
 		}
 

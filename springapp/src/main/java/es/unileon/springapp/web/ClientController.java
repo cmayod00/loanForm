@@ -3,6 +3,8 @@ package es.unileon.springapp.web;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -21,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import es.unileon.springapp.beans.LoanBean;
 import es.unileon.ulebank.account.Account;
+import es.unileon.ulebank.assets.Loan;
 import es.unileon.ulebank.bank.Bank;
 import es.unileon.ulebank.client.Client;
 import es.unileon.ulebank.office.Office;
@@ -31,23 +34,35 @@ public class ClientController {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	@Autowired
+	private Loan loan;
 	private Client client;
+	private Account account;
 	@Autowired
 	private Office office;
 	@Autowired
 	private Bank bank;
+	
+	
 	@Autowired
-	private Account account;
+	public ClientController(Loan loan, Account account,Client client){
+		this.loan = loan;
+		this.account = account;
+		this.client = client;
+		this.account.addTitular(client);
+		this.client.addLoan(loan);
+	}
 
 	@RequestMapping(value = "/client.htm")
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		LoanBean bean = new LoanBean();
+		//LoanBean bean = new LoanBean();
 		
 		Map<String, Object> myModel = new HashMap<String, Object>();
+		
+		List<Loan> loans = client.getLoans();
+		
 		myModel.put("client", this.client);
-		myModel.put("createloan", bean);
+		myModel.put("loans",loans);
 
 		return new ModelAndView("client", "model", myModel);
 	}

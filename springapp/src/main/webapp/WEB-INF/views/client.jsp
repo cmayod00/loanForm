@@ -22,32 +22,31 @@
     </table>
     <a href="<c:url value="createloan.htm"/>">Create New Loan</a>
     <br>
-    <h3>Loan</h3>
-    <table>
+    <h3>Loans</h3>
+   	<c:forEach items="${model.loans}" var="loan"><br>
+   	 <table>
+    	<tr>
+    		<td>Identifier: </td>
+    		<td>${loan.id}</td>
+    	</tr>
     	<tr>
     		<td>Money:  </td>
-    		<td>${model.createloan.initialCapital}</td>
+    		<td>${loan.amountOfMoney}</td>
     	</tr>
     	<tr>
     		<td>Interest: </td>
-    		<td>${model.createloan.interest}</td>
+    		<td>${loan.interest}</td>
     	</tr>
     	<tr>
     		<td>Payment Period: </td>
-    		<td>${model.createloan.paymentPeriod}</td>
-    	</tr>
-    	<tr>
-    		<td>Calculation of Fees: </td>
-    		<td>${model.createloan.loanType}</td>
+    		<td>${loan.paymentPeriodString}</td>
     	</tr>
     	<tr>
     		<td>Number of fees: </td>
-    		<td>${model.createloan.amortizationTime}</td>
+    		<td>${loan.amortizationTime}</td>
     	</tr>
-    	<tr>
-    		<td>Identifier: </td>
-    		<td>${model.createloan.id}</td>
-    	</tr>
+    	
     </table>
+   	</c:forEach>
   </body>
 </html>
