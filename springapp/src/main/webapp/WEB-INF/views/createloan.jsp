@@ -15,6 +15,7 @@
     	<td>Amount of Money: </td>
     	<td><form:input path="initialCapital"></form:input></td>
     	<td width="60%">
+          <form:errors path="initialCapital" cssClass="error"/>
         </td>
     	
     </tr>
