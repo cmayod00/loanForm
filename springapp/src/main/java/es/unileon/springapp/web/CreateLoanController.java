@@ -31,55 +31,77 @@ import es.unileon.ulebank.client.Client;
 import es.unileon.ulebank.office.Office;
 import es.unileon.ulebank.support.PaymentPeriod;
 
-
 @Controller
-@RequestMapping(value="/createloan.htm")
+@RequestMapping(value = "/createloan.htm")
 public class CreateLoanController {
 
-    /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
+	/** Logger for this class and subclasses */
+	protected final Log logger = LogFactory.getLog(getClass());
 
-    @Autowired
-    private Client client;
-    @Autowired
-    private Office office;
-    @Autowired
-    private Bank bank;
-    @Autowired
-    private Account account;
-    
+	@Autowired
+	private Client client;
+	@Autowired
+	private Office office;
+	@Autowired
+	private Bank bank;
+	@Autowired
+	private Account account;
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ModelAndView onSubmit(@Valid LoanBean loanBean, BindingResult result) throws LINCMalformedException, LoanException
-    {
-        if (result.hasErrors()) {
-           return new ModelAndView("The page has been falled");
-        }
-        
-        Handler idLoan = new LoanIdentificationNumberCode("MG", "ES");
-        loanBean.setId(idLoan.toString());
-        PaymentPeriod period = getPaymentPeriod(loanBean.getPaymentPeriod());
-        Loan loan = new Loan(idLoan, loanBean.getInitialCapital(), loanBean.getInterest(), period, loanBean.getAmortizationTime(), account,client);
-        client.addLoan(loan);
-        Map<String, Object> myModel = new HashMap<String, Object>();
-        List<Loan> loans = client.getLoans();
+	/**
+	 * Recive los parametros que le pasa la vista y realiza la funcion de crear
+	 * un prestamo.
+	 * 
+	 * @param loanBean
+	 * @param result
+	 * @return
+	 * @throws LINCMalformedException
+	 * @throws LoanException
+	 */
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView onSubmit(@Valid LoanBean loanBean, BindingResult result)
+			throws LINCMalformedException, LoanException {
+		if (result.hasErrors()) {
+			return new ModelAndView("The page has been falled");
+		}
+
+		Handler idLoan = new LoanIdentificationNumberCode("MG", "ES");
+		loanBean.setId(idLoan.toString());
+		PaymentPeriod period = getPaymentPeriod(loanBean.getPaymentPeriod());
+		Loan loan = new Loan(idLoan, loanBean.getInitialCapital(),
+				loanBean.getInterest(), period, loanBean.getAmortizationTime(),
+				account, client);
+		client.addLoan(loan);
+		Map<String, Object> myModel = new HashMap<String, Object>();
+		List<Loan> loans = client.getLoans();
 		myModel.put("client", this.client);
 		myModel.put("loans", loans);
 
-        return new ModelAndView("client","model",myModel);
-    }
+		return new ModelAndView("client", "model", myModel);
+	}
 
+	/**
+	 * Recibe peticiones GET de la vista y devuleve los atributos que se le
+	 * piden
+	 * 
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	protected String init(ModelMap model) {
+		LoanBean bean = new LoanBean();
 
+		model.addAttribute("createloan", bean);
+		return "createloan";
+	}
 
-    @RequestMapping(method = RequestMethod.GET)
-    protected String init(ModelMap model) {
-        LoanBean bean = new LoanBean();
-        
-        model.addAttribute("createloan", bean);
-    	return "createloan";
-    }
-    
-    private PaymentPeriod getPaymentPeriod(String paymentPeriod) {
+	/**
+	 * Metodo para obtener el string the un paymentPeriod para poder mostrarlo
+	 * en el formulario
+	 * 
+	 * @param paymentPeriod
+	 * @return
+	 */
+	private PaymentPeriod getPaymentPeriod(String paymentPeriod) {
 		if (paymentPeriod.equalsIgnoreCase("ANNUAL")) {
 			return PaymentPeriod.ANNUAL;
 		} else if (paymentPeriod.equalsIgnoreCase("BIANNUAL")) {
@@ -91,40 +113,52 @@ public class CreateLoanController {
 		} else if (paymentPeriod.equalsIgnoreCase("TWICEMONTHLY")) {
 			return PaymentPeriod.TWICEMONTHLY;
 		}
-		
+
 		return PaymentPeriod.MONTHLY;
 	}
-    
-    
-    @ModelAttribute("paymentPeriod")
-    public Map<String, String> populatePaymentPeriod(){
+
+	/**
+	 * Sirve para mandar los paymentPeriod a la vista
+	 * 
+	 * @return
+	 */
+	@ModelAttribute("paymentPeriod")
+	public Map<String, String> populatePaymentPeriod() {
 		Map<String, String> paymentPeriod = new LinkedHashMap<String, String>();
 		paymentPeriod.put("Annual", PaymentPeriod.ANNUAL.toString());
 		paymentPeriod.put("Biannual", PaymentPeriod.BIANNUAL.toString());
 		paymentPeriod.put("Monthly", PaymentPeriod.MONTHLY.toString());
 		paymentPeriod.put("Quarterly", PaymentPeriod.QUARTERLY.toString());
-		paymentPeriod.put("Twicemonthly", PaymentPeriod.TWICEMONTHLY.toString());
-    	return paymentPeriod;
-    	
-    }
-    @ModelAttribute("loanType")
-    public Map<String, String> populateLoanType(){
-    	Map<String, String> loanType = new LinkedHashMap<String, String>();
-    	loanType.put("American Method", KindOfMethod.American.toString());
-    	loanType.put("French Method", KindOfMethod.French.toString());
-    	loanType.put("German Method", KindOfMethod.German.toString());
-    	loanType.put("Italian Method", KindOfMethod.Italian.toString());
-    	loanType.put("Progressive Method", KindOfMethod.Progressive.toString().toString());
-    	return loanType;
-    }
+		paymentPeriod
+				.put("Twicemonthly", PaymentPeriod.TWICEMONTHLY.toString());
+		return paymentPeriod;
 
-    public void setClient(Client client) {
-        this.client = client;
-    }
+	}
 
-    public Client getClient() {
-        return client;
-    }
-   
+	/**
+	 * Metodo que sirve para mandar los tipos de pago posibles de cuotas a la
+	 * vista
+	 * 
+	 * @return
+	 */
+	@ModelAttribute("loanType")
+	public Map<String, String> populateLoanType() {
+		Map<String, String> loanType = new LinkedHashMap<String, String>();
+		loanType.put("American Method", KindOfMethod.American.toString());
+		loanType.put("French Method", KindOfMethod.French.toString());
+		loanType.put("German Method", KindOfMethod.German.toString());
+		loanType.put("Italian Method", KindOfMethod.Italian.toString());
+		loanType.put("Progressive Method", KindOfMethod.Progressive.toString()
+				.toString());
+		return loanType;
+	}
+
+	public void setClient(Client client) {
+		this.client = client;
+	}
+
+	public Client getClient() {
+		return client;
+	}
 
 }

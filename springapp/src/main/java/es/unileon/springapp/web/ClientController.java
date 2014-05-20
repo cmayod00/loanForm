@@ -41,10 +41,9 @@ public class ClientController {
 	private Office office;
 	@Autowired
 	private Bank bank;
-	
-	
+
 	@Autowired
-	public ClientController(Loan loan, Account account,Client client){
+	public ClientController(Loan loan, Account account, Client client) {
 		this.loan = loan;
 		this.account = account;
 		this.client = client;
@@ -52,17 +51,26 @@ public class ClientController {
 		this.client.addLoan(loan);
 	}
 
+	/**
+	 * Sirve para enviar los datos a la vista y que esta las muestre.
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws ServletException
+	 * @throws IOException
+	 */
 	@RequestMapping(value = "/client.htm")
 	public ModelAndView handleRequest(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		//LoanBean bean = new LoanBean();
-		
+		// LoanBean bean = new LoanBean();
+
 		Map<String, Object> myModel = new HashMap<String, Object>();
-		
+
 		List<Loan> loans = client.getLoans();
-		
+
 		myModel.put("client", this.client);
-		myModel.put("loans",loans);
+		myModel.put("loans", loans);
 
 		return new ModelAndView("client", "model", myModel);
 	}
