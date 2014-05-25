@@ -148,6 +148,9 @@ public class Loan implements FinancialProduct {
 	 * This is the task list
 	 */
 	private TaskList taskList;
+	/**
+	 * Client that have the loan
+	 */
 	private Client client;
 
 	/**
