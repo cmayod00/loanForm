@@ -1,23 +1,24 @@
-CREATE DATABASE springapp;
+CREATE DATABASE ulebank;
 
-GRANT ALL ON springapp.* TO springappuser@'%' IDENTIFIED BY 'pspringappuser';
-GRANT ALL ON springapp.* TO springappuser@localhost IDENTIFIED BY 'pspringappuser';
+GRANT ALL ON ulebank.* TO springappuser@'%' IDENTIFIED BY 'pspringappuser';
+GRANT ALL ON ulebank.* TO springappuser@localhost IDENTIFIED BY 'pspringappuser';
 
-USE springapp;
+USE ulebank;
 CREATE TABLE loans(
 	idLoan varchar(30) PRIMARY KEY,
 	idClient varchar(9) REFERENCES client(idClient),
-	accountNumber varchar(15) REFERENCES account(pk_account),
+	accountNumber varchar(18) REFERENCES account(accountNumber),
 	paymentPeriod varchar(15),
 	initialCapital DOUBLE,
 	amortizationTime DOUBLE,
 	interest DOUBLE,
+	creationDate datetime,
 	description varchar(160)
 );
 
 CREATE TABLE payments(
 	paymentId varchar(15) PRIMARY KEY,
-	idloan varchar(30) REFERENCES loans(idLoan),
+	idLoan varchar(30) REFERENCES loans(idLoan),
 	dateForPay date,
 	dateLimit date,
 	amountOfMoney DOUBLE,
@@ -25,7 +26,7 @@ CREATE TABLE payments(
 	interest DOUBLE,
 	pendingCapital DOUBLE,
 	isPaid boolean
-)
+);
 
 CREATE TABLE client(
 	idClient varchar(9) PRIMARY KEY,
@@ -34,19 +35,16 @@ CREATE TABLE client(
 );
 
 CREATE TABLE account(
-	accountNumber varchar(15) PRIMARY KEY,
-	officeId varchar(4),
-	bankId varchar(4),
-	CONSTRAINT pk_account PRIMARY KEY (officeId, bankId, accountNumber)
+	accountNumber varchar(18) PRIMARY KEY 
 );
 
 CREATE TABLE bank(
 	bankId varchar(4) PRIMARY KEY
-)
+);
 CREATE TABLE office(
 	officeId varchar(4) PRIMARY KEY,
-	bankId REFERENCES bank(bankId)
-)
+	bankId varchar(4) REFERENCES bank(bankIdentificator)
+);
 
 
 CREATE INDEX loans_description ON loans(description);

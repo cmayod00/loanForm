@@ -5,6 +5,7 @@ package es.unileon.ulebank.account;
 import es.unileon.ulebank.handler.GenericHandler;
 import es.unileon.ulebank.handler.Handler;
 import es.unileon.ulebank.handler.MalformedHandlerException;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,15 +36,15 @@ public class AccountHandler implements Handler {
      */
     private final static String SEPARATOR = "-";
 
-    private static Handler getField(Handler another, int number, String separator) throws MalformedHandlerException {
+    private static Handler getField(Handler id, int number, String separator) throws MalformedHandlerException {
 
         String[] splitHandler = null;
         StringBuilder error = new StringBuilder();
-        if (another != null && another.toString() != null && separator != null) {
+        if (id != null && id.toString() != null && separator != null) {
             if (number >= 0 && number < NUMBER_OF_FIELDS) {
                 //Check if the handler syntax is the same as AccountHandler syntax and parse it
-                if (another.toString().contains(separator)) {
-                    splitHandler = another.toString().split(separator);
+                if (id.toString().contains(separator)) {
+                    splitHandler = id.toString().split(separator);
                     if (splitHandler.length != NUMBER_OF_FIELDS) {
                         error.append("The handler fields (String) must be separated by \"" + separator + "\" and has 4 fields");
                     }
@@ -51,9 +52,9 @@ public class AccountHandler implements Handler {
                     //Check if there are letters and try to parse in raw format
                     String raw = "";
                     boolean foundLetter = false;
-                    for (int i = 0; i < another.toString().length() && !foundLetter; i++) {
-                        if (Character.isDigit(another.toString().charAt(i))) {
-                            raw += another.toString().charAt(i);
+                    for (int i = 0; i < id.toString().length() && !foundLetter; i++) {
+                        if (Character.isDigit(id.toString().charAt(i))) {
+                            raw += id.toString().charAt(i);
                         } else {
                             foundLetter = true;
                         }
@@ -194,13 +195,13 @@ public class AccountHandler implements Handler {
 
     /**
      *
-     * @param another
+     * @param id
      * @throws MalformedHandlerException
      */
-    public AccountHandler(Handler another) throws MalformedHandlerException {
-        this(getField(another, 1, SEPARATOR), getField(another, 0, SEPARATOR), getField(another, 3, SEPARATOR).toString());
+    public AccountHandler(Handler id) throws MalformedHandlerException {
+        this(getField(id, 1, SEPARATOR), getField(id, 0, SEPARATOR), getField(id, 3, SEPARATOR).toString());
         StringBuilder error = new StringBuilder();
-        if (!getField(another, 2, SEPARATOR).toString().equals(this.dc)) {
+        if (!getField(id, 2, SEPARATOR).toString().equals(this.dc)) {
             error.append("Wrong control digits");
         }
         if (error.length() > 0) {

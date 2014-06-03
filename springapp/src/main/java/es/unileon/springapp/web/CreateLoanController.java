@@ -19,16 +19,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.unileon.springapp.beans.LoanBean;
+import es.unileon.springapp.service.LoanManager;
 import es.unileon.ulebank.account.Account;
 import es.unileon.ulebank.assets.KindOfMethod;
 import es.unileon.ulebank.assets.Loan;
 import es.unileon.ulebank.assets.exceptions.LoanException;
-import es.unileon.ulebank.assets.handler.Handler;
-import es.unileon.ulebank.assets.handler.LoanIdentificationNumberCode;
+import es.unileon.ulebank.assets.handler.FinancialProductHandler;
 import es.unileon.ulebank.assets.handler.exceptions.LINCMalformedException;
-import es.unileon.ulebank.bank.Bank;
 import es.unileon.ulebank.client.Client;
-import es.unileon.ulebank.office.Office;
+import es.unileon.ulebank.handler.MalformedHandlerException;
 import es.unileon.ulebank.support.PaymentPeriod;
 
 @Controller
@@ -38,17 +37,12 @@ public class CreateLoanController {
 	/** Logger for this class and subclasses */
 	protected final Log logger = LogFactory.getLog(getClass());
 
+	
 	@Autowired
-	private Client client;
-	@Autowired
-	private Office office;
-	@Autowired
-	private Bank bank;
-	@Autowired
-	private Account account;
+	private LoanManager simpleLoanManager;
 
 	/**
-	 * Recive los parametros que le pasa la vista y realiza la funcion de crear
+	 * Recibe los parametros que le pasa la vista y realiza la funcion de crear
 	 * un prestamo.
 	 * 
 	 * @param loanBean
@@ -56,25 +50,29 @@ public class CreateLoanController {
 	 * @return
 	 * @throws LINCMalformedException
 	 * @throws LoanException
+	 * @throws MalformedHandlerException 
 	 */
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView onSubmit(@Valid LoanBean loanBean, BindingResult result)
-			throws LINCMalformedException, LoanException {
+			throws LINCMalformedException, LoanException, MalformedHandlerException {
 		if (result.hasErrors()) {
 			return new ModelAndView("The page has been falled");
 		}
 
-		Handler idLoan = new LoanIdentificationNumberCode("MG", "ES");
-		loanBean.setId(idLoan.toString());
-		PaymentPeriod period = getPaymentPeriod(loanBean.getPaymentPeriod());
+		Client client = simpleLoanManager.getClient("71560136Y");
+		Account account = simpleLoanManager.getAccount("123412340000000000");
+		String idLoan = new FinancialProductHandler("MG", "ES").toString();
+		loanBean.setId(idLoan);
+		String period = loanBean.getPaymentPeriod();
 		Loan loan = new Loan(idLoan, loanBean.getInitialCapital(),
 				loanBean.getInterest(), period, loanBean.getAmortizationTime(),
 				account, client);
-		client.addLoan(loan);
+		simpleLoanManager.addLoan(loan);
+		//client.addLoan(loan);
 		Map<String, Object> myModel = new HashMap<String, Object>();
-		List<Loan> loans = client.getLoans();
-		myModel.put("client", this.client);
-		myModel.put("loans", loans);
+		//List<Loan> loans = client.getLoans();
+		myModel.put("client", client);
+		myModel.put("loans", simpleLoanManager.getLoans());
 
 		return new ModelAndView("client", "model", myModel);
 	}
@@ -153,12 +151,5 @@ public class CreateLoanController {
 		return loanType;
 	}
 
-	public void setClient(Client client) {
-		this.client = client;
-	}
-
-	public Client getClient() {
-		return client;
-	}
 
 }

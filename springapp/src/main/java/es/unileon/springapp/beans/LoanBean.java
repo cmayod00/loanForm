@@ -8,6 +8,7 @@ public class LoanBean {
 	private String paymentPeriod;
 	private String loanType;
 	private String id;
+	private String idClient;
 	public double getInitialCapital() {
 		return initialCapital;
 	}
@@ -44,6 +45,12 @@ public class LoanBean {
 	}
 	public void setId(String id) {
 		this.id = id;
+	}
+	public String getIdClient() {
+		return idClient;
+	}
+	public void setIdClient(String idClient) {
+		this.idClient = idClient;
 	}
 	
 	

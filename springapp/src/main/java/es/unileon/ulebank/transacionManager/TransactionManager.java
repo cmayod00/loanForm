@@ -60,7 +60,7 @@ public class TransactionManager {
      *
      * @return ( true if sucess, false otherwise)
      */
-    public boolean deleteBank(Handler id) {
+    public boolean deleteBank(String id) {
         boolean deleted = false;
         for (int i = 0; i < banks.size() && !deleted; i++) {
             if (banks.get(i).getID().compareTo(id) == 0) {
@@ -71,39 +71,39 @@ public class TransactionManager {
         return deleted;
     }
 
-    /**
-     * Forward the transaction to the bank or return TransactionException if
-     * there isn't a bank with that id.
-     *
-     * @param t ( transaction to forward )
-     *
-     * @param destine ( destine for the transaction )
-     *
-     * @throws MalformedHandlerException (If the destine handler isn't valid )
-     *
-     * @throws TransactionException (If the bank isn't found or there are
-     * problems with the transaction ).
-     */
-    public void doTransaction(Transaction t, Handler destine) throws MalformedHandlerException, TransactionException {
-        StringBuilder error = new StringBuilder();
-        if (t != null && destine != null) {
-            Handler destination = new AccountHandler(destine).getBankHandler();
-            boolean found = false;
-            for (int i = 0; i < banks.size() && !found; i++) {
-                if (banks.get(i).getID().compareTo(destination) == 0) {
-                    banks.get(i).doTransaction(t, destine);
-                    found = true;
-                }
-            }
-            if (!found) {
-                error.append("Cannot found the bank ").append(destination.toString()).append(" \n");
-            }
-        } else {
-            error.append("The transaction or destine cannot be null");
-        }
-        if (error.length() > 0) {
-            throw new TransactionException(error.toString());
-        }
-    }
+//    /**
+//     * Forward the transaction to the bank or return TransactionException if
+//     * there isn't a bank with that id.
+//     *
+//     * @param t ( transaction to forward )
+//     *
+//     * @param destine ( destine for the transaction )
+//     *
+//     * @throws MalformedHandlerException (If the destine handler isn't valid )
+//     *
+//     * @throws TransactionException (If the bank isn't found or there are
+//     * problems with the transaction ).
+//     */
+//    public void doTransaction(Transaction t, Handler destine) throws MalformedHandlerException, TransactionException {
+//        StringBuilder error = new StringBuilder();
+//        if (t != null && destine != null) {
+//            Handler destination = new AccountHandler(destine).getBankHandler();
+//            boolean found = false;
+//            for (int i = 0; i < banks.size() && !found; i++) {
+//                if (banks.get(i).getID().compareTo(destination) == 0) {
+//                    banks.get(i).doTransaction(t, destine);
+//                    found = true;
+//                }
+//            }
+//            if (!found) {
+//                error.append("Cannot found the bank ").append(destination.toString()).append(" \n");
+//            }
+//        } else {
+//            error.append("The transaction or destine cannot be null");
+//        }
+//        if (error.length() > 0) {
+//            throw new TransactionException(error.toString());
+//        }
+//    }
 
 }

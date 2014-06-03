@@ -41,84 +41,42 @@ public class LoanTest {
 	public void setUp() throws MalformedHandlerException, TransactionException,
 			LoanException, LINCMalformedException {
 		this.manager = new TransactionManager();
-		this.bank = new Bank(this.manager, new GenericHandler("1234"));
-		this.office = new Office(new GenericHandler("1234"), bank);
+		this.bank = new Bank(this.manager,"1234");
+		this.office = new Office("1234", bank);
 
-		this.commercialAccount1 = new Account(this.office, this.bank,
-				"0000000000");
-		this.commercialAccount2 = new Account(this.office, this.bank,
-				"0000000001");
+		this.commercialAccount1 = new Account("123412340000000000");
+		this.commercialAccount2 = new Account("123412340000000001");
 
 		this.authorizedHandler1 = new GenericHandler("Miguel");
-		this.authorized1 = new Client(this.authorizedHandler1);
+		this.authorized1 = new Client("45678999A");
 
 		this.authorizedHandler2 = new GenericHandler("Antonio");
-		this.authorized2 = new Client(this.authorizedHandler2);
-
-		// we do a transaction of 40000 euros to the account1
-		Transaction transaction1 = new GenericTransaction(40000, new Date(),
-				"Salary");
-		transaction1.setEffectiveDate(new Date());
-		this.commercialAccount1.doTransaction(transaction1);
-
-		// we do a transaction of 200000 euros to the account2
-		Transaction transaction2 = new GenericTransaction(200000, new Date(),
-				"Salary");
-		transaction2.setEffectiveDate(new Date());
-		this.commercialAccount2.doTransaction(transaction2);
+		this.authorized2 = new Client("13423112A");
 
 		
-		// we create a loan of 100000 euros linked to the account
-		this.loanCancel = new Loan(new FinancialProductHandler("LN", "ES"),
-				100000, 0.15, PaymentPeriod.MONTHLY, 23,
+		this.loanCancel = new Loan("MG-5-2014-FR-KMW2C-7",
+				100000, 0.15, PaymentPeriod.MONTHLY.toString(), 23,
 				this.commercialAccount1,authorized1);
 
-		this.loanAmortize = new Loan(new FinancialProductHandler("LN", "ES"),
-				168000, 0.20, PaymentPeriod.ANNUAL, 72, this.commercialAccount2,authorized2);
+		this.loanAmortize = new Loan("MG-5-2015-ES-KMW2C-7",
+				168000, 0.20, PaymentPeriod.ANNUAL.toString(), 72, this.commercialAccount2,authorized2);
 	}
 	
 	@Test(expected = LoanException.class)
 	public void testLoanNotAllowed() throws LoanException,
 			LINCMalformedException, MalformedHandlerException {
-		this.loanNotAllowed = new Loan(new FinancialProductHandler("LN", "ES"), 100000000, 0.01,
-				PaymentPeriod.MONTHLY, 30, this.commercialAccount1,authorized1);
+		this.loanNotAllowed = new Loan("MG-5-2016-FR-KMW2C-7", 100000000, 0.01,
+				PaymentPeriod.MONTHLY.toString(), 30, this.commercialAccount1,authorized1);
 	}
 
 	@Test(expected = LoanException.class)
 	public void testLoanWrongInterest() throws LoanException,
 			LINCMalformedException, MalformedHandlerException {
-		this.loanWrongInterest = new Loan(new FinancialProductHandler("LN", "ES"), 50000, 20,
-				PaymentPeriod.MONTHLY, 23, this.commercialAccount1,authorized1);
+		this.loanWrongInterest = new Loan("MG-5-2017-ES-KMW2C-7", 50000, -9,
+				PaymentPeriod.MONTHLY.toString(), 23, this.commercialAccount1,authorized1);
 	}
 
-	@Test(expected = LoanException.class)
-	public void testCancelLoanNotEnoughMoneyToPay() throws LoanException {
-		this.loanCancel.cancelLoan();
-	}
 
-	@Test(expected = LoanException.class)
-	public void testLiquidateLoanNotEnoughMoneyToPay() throws LoanException {
-		this.loanCancel.amortize(50000);
-	}
 
-	@Test
-	public void testCancelLoan() throws LoanException, TransactionException {
-		Transaction transaction = new GenericTransaction(100000, new Date(),
-				"Salary");
-		transaction.setEffectiveDate(new Date());
-		this.commercialAccount1.doTransaction(transaction);
-		assertEquals(100000, this.loanCancel.getDebt(), 0);
-		this.loanCancel.cancelLoan();
-		assertEquals(0, this.loanCancel.getDebt(), 0);
-	}
-
-	@Test
-	public void testAmortizeQuantityToTheLoan() throws LoanException {
-		assertEquals(168000, this.loanAmortize.getDebt(), 0);
-		this.loanAmortize.amortize(50000);
-		assertEquals(118000, this.loanAmortize.getDebt(), 0);
-		this.loanAmortize.amortize(118000);
-		assertEquals(0, this.loanAmortize.getDebt(), 0);
-	}
 
 }

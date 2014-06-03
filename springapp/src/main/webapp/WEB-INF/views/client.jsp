@@ -27,7 +27,7 @@
    	 <table>
     	<tr>
     		<td>Identifier: </td>
-    		<td>${loan.id}</td>
+    		<td>${loan.idLoan}</td>
     	</tr>
     	<tr>
     		<td>Money:  </td>
