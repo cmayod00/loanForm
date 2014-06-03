@@ -1,4 +1,4 @@
-package es.unileon.ulebank.support;
+package es.unileon.ulebank.assets;
 
 public enum PaymentPeriod {
 	

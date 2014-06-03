@@ -1,25 +1,17 @@
 package es.unileon.ulebank.assets;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Date;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import es.unileon.ulebank.account.Account;
 import es.unileon.ulebank.assets.exceptions.LoanException;
-import es.unileon.ulebank.assets.handler.FinancialProductHandler;
 import es.unileon.ulebank.assets.handler.exceptions.LINCMalformedException;
 import es.unileon.ulebank.bank.Bank;
 import es.unileon.ulebank.client.Client;
 import es.unileon.ulebank.exceptions.TransactionException;
 import es.unileon.ulebank.handler.GenericHandler;
 import es.unileon.ulebank.handler.MalformedHandlerException;
-import es.unileon.ulebank.history.GenericTransaction;
-import es.unileon.ulebank.history.Transaction;
 import es.unileon.ulebank.office.Office;
-import es.unileon.ulebank.support.PaymentPeriod;
 import es.unileon.ulebank.transacionManager.TransactionManager;
 
 public class LoanTest {

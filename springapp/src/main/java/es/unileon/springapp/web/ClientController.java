@@ -31,7 +31,9 @@ public class ClientController {
 
 	@Autowired
 	private LoanManager simpleLoanManager;
-	
+	private Client client;
+	private Loan loan;
+	private Account account;
 	
 	
 
@@ -64,4 +66,19 @@ public class ClientController {
 		this.simpleLoanManager = slm;
 		
 	}
+	
+	public void setClient(Client client){
+		this.client = client;
+	}
+
+
+	public void setLoan(Loan loan) {
+		this.loan = loan;
+	}
+
+
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+	
 }

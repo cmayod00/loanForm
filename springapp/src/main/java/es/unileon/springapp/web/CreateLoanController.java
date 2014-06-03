@@ -2,7 +2,6 @@ package es.unileon.springapp.web;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -23,12 +22,12 @@ import es.unileon.springapp.service.LoanManager;
 import es.unileon.ulebank.account.Account;
 import es.unileon.ulebank.assets.KindOfMethod;
 import es.unileon.ulebank.assets.Loan;
+import es.unileon.ulebank.assets.PaymentPeriod;
 import es.unileon.ulebank.assets.exceptions.LoanException;
 import es.unileon.ulebank.assets.handler.FinancialProductHandler;
 import es.unileon.ulebank.assets.handler.exceptions.LINCMalformedException;
 import es.unileon.ulebank.client.Client;
 import es.unileon.ulebank.handler.MalformedHandlerException;
-import es.unileon.ulebank.support.PaymentPeriod;
 
 @Controller
 @RequestMapping(value = "/createloan.htm")

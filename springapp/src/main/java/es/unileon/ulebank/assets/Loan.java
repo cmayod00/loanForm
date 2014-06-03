@@ -9,13 +9,11 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import es.unileon.ulebank.account.Account;
 import es.unileon.ulebank.assets.exceptions.LoanException;
 import es.unileon.ulebank.client.Client;
-import es.unileon.ulebank.support.PaymentPeriod;
 
 // TODO PREGUNTAR A CAMINO COMO ACTUALIZAR DEBT CUANDO PASIVOS REALIZA EL PAGO DE LA CUOTA
 @Entity
