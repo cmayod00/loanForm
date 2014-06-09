@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import es.unileon.springapp.beans.LoanBean;
+import es.unileon.springapp.service.LoanBean;
 import es.unileon.springapp.service.LoanManager;
 import es.unileon.ulebank.account.Account;
 import es.unileon.ulebank.assets.KindOfMethod;

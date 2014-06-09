@@ -1,4 +1,4 @@
-package es.unileon.springapp.beans;
+package es.unileon.springapp.service;
 
 
 public class LoanBean {
